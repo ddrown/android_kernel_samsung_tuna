@@ -795,6 +795,9 @@ static void rt_do_flush(struct net *net, int process_context)
 
 		for (; list; list = next) {
 			next = rcu_dereference_protected(list->dst.rt_next, 1);
+                        if(atomic_read(&list->dst.__refcnt) && list->fi) {
+                               ipv4_cow_metrics((struct dst_entry *)list, list->dst._metrics);
+                        }
 			rt_free(list);
 		}
 	}
